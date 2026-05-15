@@ -10,7 +10,31 @@ Database-backed email templates with JSON API for CRUD, `{{placeholder}}` replac
 
 ## Install
 
-From [GitHub](https://github.com/sijanmahato/laravel-email-configuration) using Composer’s VCS repository:
+This package is **not on Packagist** by default. You must point Composer at the GitHub repository, then require a **stable tag** or an explicit **dev** constraint.
+
+### Recommended (stable): register VCS, then require `^1.0`
+
+From your Laravel project root:
+
+```bash
+composer config repositories.sijanmahato-laravel-email-configuration vcs https://github.com/sijanmahato/laravel-email-configuration.git
+composer require sijanmahato/laravel-email-configuration:^1.0
+```
+
+That satisfies `minimum-stability: stable` once release tags (for example `v1.0.0`) exist on GitHub.
+
+### Alternative: track `main` as a dev version
+
+```bash
+composer config repositories.sijanmahato-laravel-email-configuration vcs https://github.com/sijanmahato/laravel-email-configuration.git
+composer require sijanmahato/laravel-email-configuration:dev-main
+```
+
+Use this if you have not tagged a release yet, or you always want the latest `main`.
+
+### Manual `composer.json` (VCS)
+
+Merge this into your app’s `composer.json` (keep your existing `require` entries), then run `composer update sijanmahato/laravel-email-configuration`:
 
 ```json
 {
@@ -21,12 +45,12 @@ From [GitHub](https://github.com/sijanmahato/laravel-email-configuration) using 
         }
     ],
     "require": {
-        "sijanmahato/laravel-email-configuration": "dev-main"
+        "sijanmahato/laravel-email-configuration": "^1.0"
     }
 }
 ```
 
-Or as a local path package (adjust the path):
+### Local path package (adjust the path)
 
 ```json
 {
@@ -43,16 +67,14 @@ Or as a local path package (adjust the path):
 }
 ```
 
-Then:
+Then run:
 
 ```bash
-composer require sijanmahato/laravel-email-configuration:dev-main
+composer update
 php artisan vendor:publish --tag=email-config-config
 php artisan vendor:publish --tag=email-config-migrations
 php artisan migrate
 ```
-
-(If you use a path repository, use `@dev` instead of `dev-main` as appropriate.)
 
 ## Configuration
 
