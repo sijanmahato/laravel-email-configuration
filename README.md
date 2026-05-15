@@ -10,47 +10,28 @@ Database-backed email templates with JSON API for CRUD, `{{placeholder}}` replac
 
 ## Install
 
-This package is **not on Packagist** by default. You must point Composer at the GitHub repository, then require a **stable tag** or an explicit **dev** constraint.
+Published on Packagist as **[sijanmahato/laravel-email-configuration](https://packagist.org/packages/sijanmahato/laravel-email-configuration)**.
 
-### Recommended (stable): register VCS, then require `^1.0`
-
-From your Laravel project root:
+### From Packagist (recommended)
 
 ```bash
-composer config repositories.sijanmahato-laravel-email-configuration vcs https://github.com/sijanmahato/laravel-email-configuration.git
 composer require sijanmahato/laravel-email-configuration:^1.0
 ```
 
-That satisfies `minimum-stability: stable` once release tags (for example `v1.0.0`) exist on GitHub.
+Use `^1.0` (or another semver range) so Composer respects `minimum-stability: stable` when you ship tagged releases.
 
-### Alternative: track `main` as a dev version
+### From GitHub (VCS, optional)
+
+Use this if you need a branch that is not on Packagist yet, or you are testing a fork:
 
 ```bash
 composer config repositories.sijanmahato-laravel-email-configuration vcs https://github.com/sijanmahato/laravel-email-configuration.git
 composer require sijanmahato/laravel-email-configuration:dev-main
 ```
 
-Use this if you have not tagged a release yet, or you always want the latest `main`.
-
-### Manual `composer.json` (VCS)
-
-Merge this into your app’s `composer.json` (keep your existing `require` entries), then run `composer update sijanmahato/laravel-email-configuration`:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://github.com/sijanmahato/laravel-email-configuration.git"
-        }
-    ],
-    "require": {
-        "sijanmahato/laravel-email-configuration": "^1.0"
-    }
-}
-```
-
 ### Local path package (adjust the path)
+
+Add to your app `composer.json`:
 
 ```json
 {
@@ -67,10 +48,11 @@ Merge this into your app’s `composer.json` (keep your existing `require` entri
 }
 ```
 
-Then run:
+Then run `composer update`.
+
+### After the package is installed
 
 ```bash
-composer update
 php artisan vendor:publish --tag=email-config-config
 php artisan vendor:publish --tag=email-config-migrations
 php artisan migrate
