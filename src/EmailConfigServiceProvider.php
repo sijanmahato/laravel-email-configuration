@@ -19,6 +19,21 @@ class EmailConfigServiceProvider extends ServiceProvider
             __DIR__.'/../database/migrations/2024_01_01_000000_create_email_configurations_table.php' => database_path('migrations/'.date('Y_m_d_His').'_create_email_configurations_table.php'),
         ], 'email-config-migrations');
 
+        // Publish API route
+        $this->publishes([
+            __DIR__.'/routes/api.php' => base_path('routes/email-config-api.php'),
+        ], 'email-config-api');
+
+        // Publish Model
+        $this->publishes([
+            __DIR__.'/Models/EmailConfiguration.php' => app_path('Models/EmailConfiguration.php'),
+        ], 'email-config-model');
+
+        // Publish Controller
+        $this->publishes([
+            __DIR__.'/Http/Controllers/EmailConfigurationController.php' => app_path('Http/Controllers/EmailConfigurationController.php'),
+        ], 'email-config-controller');
+
         $this->loadViewsFrom(__DIR__.'/../resources/views', 'email-config');
 
         $this->registerRoutes();

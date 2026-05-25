@@ -15,7 +15,7 @@ Published on Packagist as **[sijanmahato/laravel-email-configuration](https://pa
 ### From Packagist (recommended)
 
 ```bash
-composer require sijanmahato/laravel-email-configuration:^1.0
+composer require sijanmahato/laravel-email-configuration
 ```
 
 Use `^1.0` (or another semver range) so Composer respects `minimum-stability: stable` when you ship tagged releases.
@@ -56,7 +56,16 @@ Then run `composer update`.
 php artisan vendor:publish --tag=email-config-config
 php artisan vendor:publish --tag=email-config-migrations
 php artisan migrate
+php artisan vendor:publish --tag=email-config-api
+php artisan vendor:publish --tag=email-config-model
+php artisan vendor:publish --tag=email-config-controller
 ```
+
+The additional publish commands will copy the package's API route, model, and controller into your application for customization:
+
+- `--tag=email-config-api` → `routes/email-config-api.php`
+- `--tag=email-config-model` → `app/Models/EmailConfiguration.php`
+- `--tag=email-config-controller` → `app/Http/Controllers/EmailConfigurationController.php`
 
 ## Configuration
 
