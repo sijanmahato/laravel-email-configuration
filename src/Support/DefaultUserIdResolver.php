@@ -1,8 +1,8 @@
 <?php
 
-namespace App\Support;
+namespace Karja\EmailConfig\Support;
 
-use App\Contracts\UserIdResolver;
+use Karja\EmailConfig\Contracts\UserIdResolver;
 
 class DefaultUserIdResolver implements UserIdResolver
 {

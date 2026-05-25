@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace Karja\EmailConfig\Http\Controllers;
 
-use App\Contracts\UserIdResolver;
-use App\Http\Requests\StoreEmailConfigurationRequest;
-use App\Http\Requests\TestSendEmailConfigurationRequest;
-use App\Http\Requests\UpdateEmailConfigurationRequest;
-use App\Http\Resources\EmailConfigurationResource;
-use App\Mail\TemplatedEmail;
-use App\Models\EmailConfiguration;
-use App\Services\PlaceholderReplacer;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
+use Karja\EmailConfig\Contracts\UserIdResolver;
+use Karja\EmailConfig\Http\Requests\StoreEmailConfigurationRequest;
+use Karja\EmailConfig\Http\Requests\TestSendEmailConfigurationRequest;
+use Karja\EmailConfig\Http\Requests\UpdateEmailConfigurationRequest;
+use Karja\EmailConfig\Http\Resources\EmailConfigurationResource;
+use Karja\EmailConfig\Mail\TemplatedEmail;
+use Karja\EmailConfig\Models\EmailConfiguration;
+use Karja\EmailConfig\Services\PlaceholderReplacer;
 use Throwable;
 
 class EmailConfigurationController extends Controller

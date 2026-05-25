@@ -1,8 +1,8 @@
 <?php
 
-namespace Tests\Unit;
+namespace Karja\EmailConfig\Tests\Unit;
 
-use App\Services\PlaceholderReplacer;
+use Karja\EmailConfig\Services\PlaceholderReplacer;
 use PHPUnit\Framework\TestCase;
 
 class PlaceholderReplacerTest extends TestCase

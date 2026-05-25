@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Events;
+namespace Karja\EmailConfig\Events;
 
-use App\Models\EmailConfiguration;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Karja\EmailConfig\Models\EmailConfiguration;
 
 class EmailConfigurationDeleted
 {

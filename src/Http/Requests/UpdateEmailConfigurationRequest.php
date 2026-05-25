@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Http\Requests;
+namespace Karja\EmailConfig\Http\Requests;
 
-use App\Models\EmailConfiguration;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
+use Karja\EmailConfig\Models\EmailConfiguration;
 
 class UpdateEmailConfigurationRequest extends FormRequest
 {
