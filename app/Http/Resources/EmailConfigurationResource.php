@@ -1,10 +1,10 @@
 <?php
 
-namespace Karja\EmailConfig\Http\Resources;
+namespace App\Http\Resources;
 
+use App\Models\EmailConfiguration;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Karja\EmailConfig\Models\EmailConfiguration;
 
 /**
  * @mixin EmailConfiguration

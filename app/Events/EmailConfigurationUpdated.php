@@ -1,12 +1,12 @@
 <?php
 
-namespace Karja\EmailConfig\Events;
+namespace App\Events;
 
+use App\Models\EmailConfiguration;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
-use Karja\EmailConfig\Models\EmailConfiguration;
 
-class EmailConfigurationCreated
+class EmailConfigurationUpdated
 {
     use Dispatchable;
     use SerializesModels;

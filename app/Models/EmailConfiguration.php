@@ -1,11 +1,11 @@
 <?php
 
-namespace Karja\EmailConfig\Models;
+namespace App\Models;
 
+use App\Events\EmailConfigurationCreated;
+use App\Events\EmailConfigurationDeleted;
+use App\Events\EmailConfigurationUpdated;
 use Illuminate\Database\Eloquent\Model;
-use Karja\EmailConfig\Events\EmailConfigurationCreated;
-use Karja\EmailConfig\Events\EmailConfigurationDeleted;
-use Karja\EmailConfig\Events\EmailConfigurationUpdated;
 
 class EmailConfiguration extends Model
 {

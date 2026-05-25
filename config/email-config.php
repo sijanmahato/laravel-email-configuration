@@ -18,7 +18,7 @@ return [
     | Middleware
     |--------------------------------------------------------------------------
     |
-    | Applied to all package routes. Example:
+    | Applied to all email-config routes. Example:
     | ['api', 'auth:api', 'permission:manage-email-configurations']
     |
     */

@@ -2,95 +2,62 @@
 
 Database-backed email templates with JSON API for CRUD, `{{placeholder}}` replacement, and test sends.
 
+This repository is **application code** (standard `App\` namespaces), not a Composer package. Copy or merge the folders into your Laravel project.
+
 ## Requirements
 
 - PHP 8.1+
 - Laravel 10, 11, or 12
-- `users` table (for `created_by` / `updated_by` foreign keys in the published migration)
+- `users` table (for `created_by` / `updated_by` foreign keys in the migration)
 
-## Install
+## Install into your Laravel app
 
-Published on Packagist as **[sijanmahato/laravel-email-configuration](https://packagist.org/packages/sijanmahato/laravel-email-configuration)**.
+Copy these paths into your project (merge if you already have files with the same names):
 
-### From Packagist (recommended)
+| This repo | Your Laravel app |
+|-----------|------------------|
+| `app/` | `app/` |
+| `routes/email-config-api.php` | `routes/email-config-api.php` |
+| `config/email-config.php` | `config/email-config.php` |
+| `database/migrations/` | `database/migrations/` |
+| `resources/views/emails/` | `resources/views/emails/` |
 
-```bash
-composer require sijanmahato/laravel-email-configuration
+Register the provider in `bootstrap/providers.php` (Laravel 11+) or `config/app.php` (Laravel 10):
+
+```php
+App\Providers\EmailConfigServiceProvider::class,
 ```
 
-Use `^1.0` (or another semver range) so Composer respects `minimum-stability: stable` when you ship tagged releases.
-
-### From GitHub (VCS, optional)
-
-Use this if you need a branch that is not on Packagist yet, or you are testing a fork:
+Run migrations:
 
 ```bash
-composer config repositories.sijanmahato-laravel-email-configuration vcs https://github.com/sijanmahato/laravel-email-configuration.git
-composer require sijanmahato/laravel-email-configuration:dev-main
-```
-
-### Local path package (adjust the path)
-
-Add to your app `composer.json`:
-
-```json
-{
-    "repositories": [
-        {
-            "type": "path",
-            "url": "./packages/laravel-email-configuration",
-            "options": { "symlink": true }
-        }
-    ],
-    "require": {
-        "sijanmahato/laravel-email-configuration": "*"
-    }
-}
-```
-
-Then run `composer update`.
-
-### After the package is installed
-
-```bash
-php artisan vendor:publish --tag=email-config-config
-php artisan vendor:publish --tag=email-config-migrations
 php artisan migrate
-php artisan vendor:publish --tag=email-config-api
-php artisan vendor:publish --tag=email-config-model
-php artisan vendor:publish --tag=email-config-controller
 ```
-
-The additional publish commands will copy the package's API route, model, and controller into your application for customization:
-
-- `--tag=email-config-api` → `routes/email-config-api.php`
-- `--tag=email-config-model` → `app/Models/EmailConfiguration.php`
-- `--tag=email-config-controller` → `app/Http/Controllers/EmailConfigurationController.php`
 
 ## Configuration
 
 Edit `config/email-config.php`:
 
-- **`route_prefix`**: URL segment for the package routes. If your HTTP kernel already prefixes API routes with `api`, set this to `api/admin/email-configurations` (or whatever matches your app).
+- **`route_prefix`**: URL segment for the routes. If your API already uses an `api` prefix, set this to `api/admin/email-configurations`.
 - **`middleware`**: Stack applied to all routes. Replace `auth:sanctum` with `auth:api` or add permission middleware as needed.
 
 ## Auditing
 
-This package does not ship your application’s `Auditable` trait. Instead, the `EmailConfiguration` model dispatches:
+The `EmailConfiguration` model dispatches:
 
-- `Karja\EmailConfig\Events\EmailConfigurationCreated`
-- `Karja\EmailConfig\Events\EmailConfigurationUpdated`
-- `Karja\EmailConfig\Events\EmailConfigurationDeleted`
+- `App\Events\EmailConfigurationCreated`
+- `App\Events\EmailConfigurationUpdated`
+- `App\Events\EmailConfigurationDeleted`
 
 Subscribe in your `EventServiceProvider` (or `AppServiceProvider`) and forward them to your audit logger.
 
 ## Custom user id for `created_by` / `updated_by`
 
-Bind your own resolver in a service provider:
+Bind your own resolver in `AppServiceProvider`:
 
 ```php
+use App\Contracts\UserIdResolver;
 use Illuminate\Support\ServiceProvider;
-use Karja\EmailConfig\Contracts\UserIdResolver;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -122,6 +89,14 @@ class AppServiceProvider extends ServiceProvider
 Test send JSON body: `{ "to": "user@example.com", "variables": { "user_name": "Jane" } }`.
 
 Placeholders use `{{variable_name}}` in subject, HTML, and text bodies.
+
+## Tests
+
+From this repo (after `composer install`):
+
+```bash
+vendor/bin/phpunit
+```
 
 ## License
 

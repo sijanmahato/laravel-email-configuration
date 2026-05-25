@@ -1,6 +1,6 @@
 <?php
 
-namespace Karja\EmailConfig\Contracts;
+namespace App\Contracts;
 
 interface UserIdResolver
 {

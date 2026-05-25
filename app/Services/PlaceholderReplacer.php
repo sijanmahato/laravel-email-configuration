@@ -1,6 +1,6 @@
 <?php
 
-namespace Karja\EmailConfig\Services;
+namespace App\Services;
 
 class PlaceholderReplacer
 {

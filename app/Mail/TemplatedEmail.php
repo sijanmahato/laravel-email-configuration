@@ -1,6 +1,6 @@
 <?php
 
-namespace Karja\EmailConfig\Mail;
+namespace App\Mail;
 
 use Illuminate\Mail\Mailable;
 
@@ -16,10 +16,10 @@ class TemplatedEmail extends Mailable
     public function build(): static
     {
         $mail = $this->subject($this->resolvedSubject)
-            ->view('email-config::raw-html', ['html' => $this->resolvedHtml]);
+            ->view('emails.raw-html', ['html' => $this->resolvedHtml]);
 
         if ($this->resolvedText !== null && $this->resolvedText !== '') {
-            $mail->text('email-config::raw-text', ['text' => $this->resolvedText]);
+            $mail->text('emails.raw-text', ['text' => $this->resolvedText]);
         }
 
         return $mail;

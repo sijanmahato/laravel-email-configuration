@@ -1,18 +1,7 @@
 {
     "name": "sijanmahato/laravel-email-configuration",
-    "description": "Database-driven email templates with admin API, placeholder replacement, and test send.",
-    "type": "library",
+    "description": "Laravel application module: database-driven email templates with admin API.",
     "license": "MIT",
-    "homepage": "https://github.com/sijanmahato/laravel-email-configuration",
-    "support": {
-        "issues": "https://github.com/sijanmahato/laravel-email-configuration/issues",
-        "source": "https://github.com/sijanmahato/laravel-email-configuration"
-    },
-    "authors": [
-        {
-            "name": "Karja Suchana Kendra Limited"
-        }
-    ],
     "require": {
         "php": "^8.1",
         "illuminate/support": "^10.0|^11.0|^12.0",
@@ -27,22 +16,12 @@
     },
     "autoload": {
         "psr-4": {
-            "Karja\\EmailConfig\\": "src/"
+            "App\\": "app/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Karja\\EmailConfig\\Tests\\": "tests/"
-        }
-    },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "Karja\\EmailConfig\\EmailConfigServiceProvider"
-            ]
-        },
-        "branch-alias": {
-            "dev-main": "1.x-dev"
+            "Tests\\": "tests/"
         }
     },
     "minimum-stability": "stable",
