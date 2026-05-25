@@ -26,7 +26,7 @@ class EmailConfigServiceProvider extends ServiceProvider
 
         // Publish Model
         $this->publishes([
-            __DIR__.'/Models/EmailConfiguration.php' => app_path('Models/EmailConfiguration.php'),
+            __DIR__.'/Models/EmailConfiguration.php' => app_path('Models/emailConfiguration.php'),
         ], 'email-config-model');
 
         // Publish Controller
