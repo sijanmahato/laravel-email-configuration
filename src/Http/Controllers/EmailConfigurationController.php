@@ -1,6 +1,6 @@
 <?php
 
-namespace Karja\EmailConfig\Http\Controllers;
+namespace App\Http\Controllers;
 
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
