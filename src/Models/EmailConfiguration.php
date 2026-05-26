@@ -1,6 +1,6 @@
 <?php
 
-namespace Karja\EmailConfig\Models;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Karja\EmailConfig\Events\EmailConfigurationCreated;
