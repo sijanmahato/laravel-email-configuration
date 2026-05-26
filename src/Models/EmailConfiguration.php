@@ -3,12 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Karja\EmailConfig\Events\EmailConfigurationCreated;
-use Karja\EmailConfig\Events\EmailConfigurationDeleted;
-use Karja\EmailConfig\Events\EmailConfigurationUpdated;
 
-class EmailConfiguration extends Model
+class emailConfiguration extends Model
 {
+    
     protected $table = 'email_configurations';
 
     protected $fillable = [
@@ -27,11 +25,5 @@ class EmailConfiguration extends Model
     protected $casts = [
         'variables' => 'array',
         'is_active' => 'boolean',
-    ];
-
-    protected $dispatchesEvents = [
-        'created' => EmailConfigurationCreated::class,
-        'updated' => EmailConfigurationUpdated::class,
-        'deleted' => EmailConfigurationDeleted::class,
     ];
 }

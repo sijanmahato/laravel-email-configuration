@@ -1,7 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use Karja\EmailConfig\Http\Controllers\EmailConfigurationController;
+use App\Http\Controllers\EmailConfigurationController;
 
 Route::get('/email-configurations', [EmailConfigurationController::class, 'index']);
 Route::post('/email-configurations', [EmailConfigurationController::class, 'store']);
