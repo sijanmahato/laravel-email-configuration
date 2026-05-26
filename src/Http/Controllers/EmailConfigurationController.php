@@ -2,149 +2,139 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Str;
-use Karja\EmailConfig\Contracts\UserIdResolver;
-use Karja\EmailConfig\Http\Requests\StoreEmailConfigurationRequest;
-use Karja\EmailConfig\Http\Requests\TestSendEmailConfigurationRequest;
-use Karja\EmailConfig\Http\Requests\UpdateEmailConfigurationRequest;
-use Karja\EmailConfig\Http\Resources\EmailConfigurationResource;
-use Karja\EmailConfig\Mail\TemplatedEmail;
-use Karja\EmailConfig\Models\EmailConfiguration;
-use Karja\EmailConfig\Services\PlaceholderReplacer;
-use Throwable;
+use App\Models\emailConfiguration;
+use Illuminate\Http\Request;
 
 class EmailConfigurationController extends Controller
 {
-    public function __construct(
-        protected PlaceholderReplacer $placeholderReplacer,
-        protected UserIdResolver $userIdResolver
-    ) {
+    /**
+     * Display a listing of the resource.
+     */
+    public function index()
+    {
+        // List all email templates
+        return response()->json(emailConfiguration::all());
     }
 
-    public function index(): AnonymousResourceCollection
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
     {
-        $items = EmailConfiguration::query()->orderBy('name')->get();
-
-        return EmailConfigurationResource::collection($items);
+        // Not used for API
+        return response()->json(['message' => 'Not implemented'], 501);
     }
 
-    public function show(EmailConfiguration $emailConfiguration): EmailConfigurationResource
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
     {
-        return new EmailConfigurationResource($emailConfiguration);
-    }
+        $data = $request->validate([
+            'name' => 'required|string|unique:email_configurations,name',
+            'subject' => 'required|string',
+            'slug' => 'required|string|unique:email_configurations,slug',
+            'html_content' => 'required|string',
+            'text_content' => 'nullable|string',
+            'variables' => 'nullable|array',
+            'is_active' => 'boolean',
+            'type' => 'nullable|string',
+        ]);
 
-    public function store(StoreEmailConfigurationRequest $request): JsonResponse
-    {
-        $userId = $this->userIdResolver->resolve();
-
-        $data = $this->normalizePayload($request->validated());
-        if (! array_key_exists('is_active', $data)) {
-            $data['is_active'] = true;
+        // Convert variables to JSON if present
+        if (isset($data['variables'])) {
+            $data['variables'] = json_encode($data['variables']);
         }
-        $data['created_by'] = $userId;
-        $data['updated_by'] = $userId;
 
-        $configuration = EmailConfiguration::query()->create($data);
+        $data['created_by'] = auth()->id();
+        $data['updated_by'] = auth()->id();
 
-        return (new EmailConfigurationResource($configuration))
-            ->response()
-            ->setStatusCode(201);
+        $emailConfig = emailConfiguration::create($data);
+        return response()->json($emailConfig, 201);
     }
 
-    public function update(UpdateEmailConfigurationRequest $request, EmailConfiguration $emailConfiguration): EmailConfigurationResource
+    /**
+     * Display the specified resource.
+     */
+    public function show(emailConfiguration $emailConfiguration)
     {
-        $data = $this->normalizePayload($request->validated());
-        $data['updated_by'] = $this->userIdResolver->resolve();
+        return response()->json($emailConfiguration);
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(emailConfiguration $emailConfiguration)
+    {
+        // Not used for API
+        return response()->json(['message' => 'Not implemented'], 501);
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, emailConfiguration $emailConfiguration)
+    {
+        $data = $request->validate([
+            'name' => 'sometimes|required|string|unique:email_configurations,name,' . $emailConfiguration->id,
+            'subject' => 'sometimes|required|string',
+            'slug' => 'sometimes|required|string|unique:email_configurations,slug,' . $emailConfiguration->id,
+            'html_content' => 'sometimes|required|string',
+            'text_content' => 'nullable|string',
+            'variables' => 'nullable|array',
+            'is_active' => 'boolean',
+            'type' => 'nullable|string',
+        ]);
+
+        if (isset($data['variables'])) {
+            $data['variables'] = json_encode($data['variables']);
+        }
+
+        $data['updated_by'] = auth()->id();
 
         $emailConfiguration->update($data);
-
-        return new EmailConfigurationResource($emailConfiguration->fresh());
+        return response()->json($emailConfiguration);
     }
 
-    public function destroy(EmailConfiguration $emailConfiguration): JsonResponse
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(emailConfiguration $emailConfiguration)
     {
         $emailConfiguration->delete();
-
-        return response()->json(['message' => 'Deleted.']);
+        return response()->json(['message' => 'Deleted']);
     }
-
-    public function testSend(TestSendEmailConfigurationRequest $request, EmailConfiguration $emailConfiguration): JsonResponse
+    /**
+     * Test sending an email using a template.
+     */
+    public function testSend(Request $request, emailConfiguration $emailConfiguration)
     {
-        if (! $emailConfiguration->is_active) {
-            return response()->json(['message' => 'Template is inactive.'], 422);
+        $data = $request->validate([
+            'to' => 'required|email',
+            'variables' => 'nullable|array',
+        ]);
+
+        // Prepare variables for template
+        $variables = $data['variables'] ?? [];
+        $html = $emailConfiguration->html_content;
+        $text = $emailConfiguration->text_content;
+        foreach ($variables as $key => $value) {
+            $html = str_replace('{{'.$key.'}}', $value, $html);
+            $text = str_replace('{{'.$key.'}}', $value, $text);
         }
-
-        /** @var array<string, mixed> $variables */
-        $variables = $request->input('variables', []);
-        $normalized = $this->normalizeVariableMap($variables);
-
-        $subject = $this->placeholderReplacer->replace($emailConfiguration->subject, $normalized);
-        $html = $this->placeholderReplacer->replace($emailConfiguration->html_content, $normalized);
-        $text = $emailConfiguration->text_content !== null
-            ? $this->placeholderReplacer->replace($emailConfiguration->text_content, $normalized)
-            : null;
 
         try {
-            Mail::to($request->string('to')->toString())->send(new TemplatedEmail($subject, $html, $text));
-        } catch (Throwable $e) {
-            report($e);
-
-            return response()->json([
-                'message' => 'Failed to send email.',
-                'error' => config('app.debug') ? $e->getMessage() : null,
-            ], 500);
+            \Mail::send([], [], function ($message) use ($data, $emailConfiguration, $html, $text) {
+                $message->to($data['to'])
+                    ->subject($emailConfiguration->subject)
+                    ->html($html);
+                if (!empty($text)) {
+                    $message->text($text);
+                }
+            });
+            return response()->json(['success' => true, 'message' => 'Test email sent.']);
+        } catch (\Exception $e) {
+            return response()->json(['success' => false, 'error' => $e->getMessage()], 500);
         }
-
-        return response()->json(['message' => 'Email sent.']);
-    }
-
-    /**
-     * @param  array<string, mixed>  $validated
-     * @return array<string, mixed>
-     */
-    protected function normalizePayload(array $validated): array
-    {
-        if (isset($validated['variables']) && is_array($validated['variables'])) {
-            $validated['variables'] = array_values(array_map(
-                static fn ($v) => is_string($v) ? $v : (string) $v,
-                $validated['variables']
-            ));
-        }
-
-        if (array_key_exists('slug', $validated) && is_string($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['slug']);
-        }
-
-        return $validated;
-    }
-
-    /**
-     * @param  array<string, mixed>  $variables
-     * @return array<string, string>
-     */
-    protected function normalizeVariableMap(array $variables): array
-    {
-        $out = [];
-
-        foreach ($variables as $key => $value) {
-            if (! is_string($key) || $key === '') {
-                continue;
-            }
-
-            if ($value === null) {
-                $out[$key] = '';
-
-                continue;
-            }
-
-            if (is_scalar($value) || (is_object($value) && method_exists($value, '__toString'))) {
-                $out[$key] = (string) $value;
-            }
-        }
-
-        return $out;
     }
 }
