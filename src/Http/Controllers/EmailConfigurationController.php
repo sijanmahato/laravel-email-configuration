@@ -119,8 +119,8 @@ class EmailConfigurationController extends Controller
         $html = $emailConfiguration->html_content;
         $text = $emailConfiguration->text_content;
         foreach ($variables as $key => $value) {
-            $html = str_replace('{{'.$key.'}}', $value, $html);
-            $text = str_replace('{{'.$key.'}}', $value, $text);
+            $html = str_replace(['{'.$key.'}', '{{'.$key.'}}'], $value, $html);
+            $text = str_replace(['{'.$key.'}', '{{'.$key.'}}'], $value, $text);
         }
 
         try {
